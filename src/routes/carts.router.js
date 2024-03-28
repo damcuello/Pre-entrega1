@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router(); 
+const router = express.Router();
 const CartManager = require("../controllers/cart-manager.js");
 const cartManager = new CartManager("./src/models/carts.json");
 
@@ -36,11 +36,16 @@ router.get("/carts/:cid", async (req, res) => {
 router.post("/carts/:cid/product/:pid", async (req, res) => {
     const cartId = parseInt(req.params.cid);
     const productId = req.params.pid;
-    const quantity = req.body.quantity || 1; 
+    const quantity = req.body.quantity || 1;
+
 
     try {
-        const actualizarCarrito = await cartManager.agregarProductoAlCarrito(cartId,productId, quantity);
-        res.json(actualizarCarrito.products);
+        const respuesta = await cartManager.agregarProductoAlCarrito(cartId, productId, quantity);
+        if (respuesta.status) {
+            res.json({ message: respuesta.msg });
+        } else {
+            res.status(404).json({ error: respuesta.msg });
+        }
     } catch (error) {
         res.status(500).json({
             error: "Error interno del servidor"

@@ -54,13 +54,16 @@ router.post("/products", async (req, res) => {
     const nuevoProducto = req.body; 
 
     try {
-        await productManager.addProduct(nuevoProducto);
-        res.status(201).json({message: "Producto agregado exitosamente"});
+        const respuesta = await productManager.addProduct(nuevoProducto);
+        if (respuesta.status) {
+            res.status(201).json({ message: "Producto agregado exitosamente" });
+        } else {
+            res.status(400).json({ error: respuesta.msg });
+        }
     } catch (error) {
-        res.status(500).json({error: "Error interno del servidor"});
+        res.status(500).json({ error: "Error interno del servidor" });
     }
 })
-
 
 //4) Actualizar por ID
 

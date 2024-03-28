@@ -13,13 +13,11 @@ class ProductManager {
       const arrayProductos = await this.leerArchivo();
 
       if (!title || !description || !price || !code || !stock || !category) {
-        console.log("Todos los campos son obligatorios");
-        return;
+        return { status: false, msg: "Todos los campos son obligatorios" };
       }
 
       if (arrayProductos.some(item => item.code === code)) {
-        console.log("El código debe ser único");
-        return;
+        return { status: false, msg: "El código debe ser único" };
       }
 
       const newProduct = {
@@ -42,9 +40,11 @@ class ProductManager {
 
       arrayProductos.push(newProduct);
       await this.guardarArchivo(arrayProductos);
+
+      return { status: true, msg: `Producto agregado correctamente con id ${newProduct.id}` };
     } catch (error) {
       console.log("Error al agregar producto", error);
-      throw error; 
+      return { status: false, msg: "Error interno del servidor" };
     }
   }
   async getProducts() {
